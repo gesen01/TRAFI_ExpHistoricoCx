@@ -1,0 +1,32 @@
+﻿SET DATEFIRST 7
+SET ANSI_NULLS OFF
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET LOCK_TIMEOUT -1
+SET QUOTED_IDENTIFIER OFF
+GO
+
+IF EXISTS(SELECT * FROM sysobjects WHERE TYPE='fn' AND NAME='fnTRPendientesHist')
+DROP FUNCTION fnTRPendientesHist
+GO
+CREATE FUNCTION fnTRPendientesHist(@ID	INT,@Fecha  DATETIME,@Estatus	  VARCHAR(15))
+RETURNS BIT
+AS
+BEGIN
+	DECLARE @FechaC    DATETIME,
+		    @Resultado  BIT
+	
+	IF @Estatus='PENDIENTE'
+	BEGIN
+		SELECT @FechaC=CAST(mt.FechaComenzo AS DATE)
+		FROM MovTiempo AS mt
+		WHERE mt.ID=@ID
+		AND mt.Estatus='CONCLUIDO'
+		
+		IF @FechaC=@Fecha
+		  SET @Resultado=1
+		ELSE
+		  SET @Resultado=0
+	END
+	
+RETURN ISNULL(@Resultado,0)
+END
