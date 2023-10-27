@@ -24,7 +24,8 @@ CREATE TABLE TRAFIMARHistSaldosCx(
     Cuenta          VARCHAR(30),
     UltimoCambio    DATETIME,
     Modulo          VARCHAR(5),
-    FechaVencimiento    DATETIME
+    FechaVencimiento    DATETIME,
+    DiasCredito     VARCHAR(15)
     
     		
 )

@@ -35,7 +35,7 @@ BEGIN
 		
 		INSERT INTO TRAFIMARHistSaldosCx(IDOrigen,FechaEmision, Mov, MovID, Cliente,Nombre,Moneda,SubTotal,Impuestos,Total,
 				 						TipoCambio,SubTotalMN,ImpuestosMN,TotalMN,Saldo,Aplicacion,Descripcion,Concepto,Sucursal,CentroCosto
-										,Cuenta,Empresa,UltimoCambio,Modulo,FechaVencimiento)
+										,Cuenta,Empresa,UltimoCambio,Modulo,FechaVencimiento,DiasCredito)
 				SELECT c.ID,c.FechaEmision,c.Mov,c.MovID,c.Cliente,t.Nombre,c.Moneda,c.importe,c.impuestos
 					   ,a.Cargo,c.TipoCambio
 					   ,IIF(c.Moneda<>'Pesos',c.Importe*c.TipoCambio,c.Importe) AS 'SubTotalMN'
@@ -52,6 +52,7 @@ BEGIN
 					   ,COALESCE(IIF(c.Estatus='PENDIENTE' AND c.Mov<>'Endoso',getdate(),e.Fecha),f.Fecha,IIF(c.Mov IN ('Aplicacion','Aplicacion/Anticipo','Aplicacion Anticipo'),a.Fecha,NULL),GETDATE())
 					   ,@Modulo
 					   ,c.Vencimiento
+					   ,t.Condicion
 				FROM Cxc c
 				LEFT JOIN Auxiliar a ON c.ID=a.ModuloID AND a.Cargo IS NOT NULL AND a.Abono IS NULL
 				LEFT JOIN Auxiliar e ON c.Origen=e.Aplica AND c.OrigenID=e.AplicaID AND a.Empresa=e.Empresa AND e.Abono IS NOT NULL AND e.Cargo IS NULL
@@ -64,7 +65,7 @@ BEGIN
 				AND c.Estatus NOT IN ('CANCELADO','SINAFECTAR')
 				GROUP BY c.ID,c.FechaEmision,c.Mov,c.MovID,c.Cliente,t.Nombre,c.Moneda,c.importe,c.impuestos
 					   ,a.Cargo,c.TipoCambio,c.Observaciones,c.Concepto,c.Sucursal,cc.CentroCosto
-					  ,d.Cuenta,c.Empresa,e.Fecha,a.Fecha,f.Fecha,c.Estatus,c.Vencimiento
+					  ,d.Cuenta,c.Empresa,e.Fecha,a.Fecha,f.Fecha,c.Estatus,c.Vencimiento,t.Condicion
 	END
 
 	IF @Modulo='CXP'
