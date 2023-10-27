@@ -23,7 +23,8 @@ CREATE TABLE TRAFIMARHistSaldosCx(
     CentroCosto     VARCHAR(25),
     Cuenta          VARCHAR(30),
     UltimoCambio    DATETIME,
-    Modulo          VARCHAR(5)
+    Modulo          VARCHAR(5),
+    FechaVencimiento    DATETIME
     
     		
 )
